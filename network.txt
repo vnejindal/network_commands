@@ -1,0 +1,61 @@
+
+
+1. iftop and nload commands 
+
+2. current state of connections with ss -tan :
+(Source: https://vincent.bernat.ch/en/blog/2014-tcp-time-wait-state-linux)
+
+$ss -tan | head -5
+LISTEN     0  511             *:80              *:*
+SYN-RECV   0  0     192.0.2.145:80    203.0.113.5:35449
+SYN-RECV   0  0     192.0.2.145:80   203.0.113.27:53599
+ESTAB      0  0     192.0.2.145:80   203.0.113.27:33605
+TIME-WAIT  0  0     192.0.2.145:80   203.0.113.47:50685
+
+2.2  list the number of used quadruplets: 
+
+$ ss -tan 'sport = :80' | awk '{print $(NF)" "$(NF-1)}' | \
+      sed 's/:[^ ]*//g' | sort | uniq -c
+    696 10.24.2.30 10.33.1.64
+   1881 10.24.2.30 10.33.1.65
+   5314 10.24.2.30 10.33.1.66
+   5293 10.24.2.30 10.33.1.67
+   3387 10.24.2.30 10.33.1.68
+   2663 10.24.2.30 10.33.1.69
+   1129 10.24.2.30 10.33.1.70
+  10536 10.24.2.30 10.33.1.732.2 
+
+2.3 size of the hash table depends on the system memory and is printed at boot:
+
+$ dmesg | grep "TCP established hash table"
+[    0.169348] TCP established hash table entries: 65536 (order: 8, 1048576 bytes)
+
+2.4  size of this hash table is the same as the size of the hash table of connections:
+
+$ dmesg | grep "TCP bind hash table"
+[    0.169962] TCP bind hash table entries: 65536 (order: 8, 1048576 bytes)
+
+$ sudo apt-get install linux-image-$(uname -r)-dbg
+[...]
+ gdb /usr/lib/debug/boot/vmlinux-$(uname -r)
+(gdb) print sizeof(struct tcp_timewait_sock)
+1 = 168
+(gdb) print sizeof(struct tcp_sock)
+2 = 1776
+(gdb) print sizeof(struct inet_bind_bucket)
+3 = 48
+
+
+2.5 slabtop 
+
+ sudo slabtop -o | grep -E '(^  OBJS|tw_sock_TCP|tcp_bind_bucket)'
+  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+ 50955  49725  97%    0.25K   3397       15     13588K tw_sock_TCP
+ 44840  36556  81%    0.06K    760       59      3040K tcp_bind_bucket
+
+
+
+ 3. Use nicstat command to get interface level statistics 
+
+
+4. Use ethtool and sysctl options to configure network parameters
