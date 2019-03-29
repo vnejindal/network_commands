@@ -59,3 +59,20 @@ $ sudo apt-get install linux-image-$(uname -r)-dbg
 
 
 4. Use ethtool and sysctl options to configure network parameters
+
+
+5. iptables 
+   5.1 Apply them: 
+      $ iptables -A INPUT -p tcp -m state --state NEW --dport 1883 -m limit --limit 1000/second --limit-burst 200 -j ACCEPT  
+      $ iptables -A INPUT -p tcp --tcp-flags SYN SYN --dport 1883-m state --state NEW -j DROP
+ 
+
+   5.2 List them 
+       $iptables -L 
+
+   5.3 View their status and statistics: 
+       $iptables -vL 
+
+   5.4 Persist them: 
+       VNE::TBD
+
