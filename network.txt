@@ -76,3 +76,10 @@ $ sudo apt-get install linux-image-$(uname -r)-dbg
    5.4 Persist them: 
        VNE::TBD
 
+   #For packet count
+   sudo iptables -L -n -v -x
+   #For clear the counters
+   sudo iptables -Z
+   sudo iptables -L -n -v -x
+   sudo iptables -L -n -v -x -Z
+   watch -n10 "sudo iptables -L -n -v -x -Z"
