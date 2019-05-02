@@ -56,7 +56,15 @@ $ sudo apt-get install linux-image-$(uname -r)-dbg
 
 
  3. Use nicstat command to get interface level statistics 
-
+    nicstat -i ens5 1
+    nicstat -t -i ens5 1
+    3.1 'ifstat' package can be used as well 
+    3.2 'tcptrack' package tell live statistics per connection 
+        e.g. tcptrack -i ens5 port 44053
+             sudo tcptrack -p -r 10800 -i ens5 port 1883
+    3.3 tcpdump examples 
+        sudo tcpdump -i ens3 -w abc.pcap host 35.161.1.237
+        tcpdump -vvv -n -xxx host 52.55.249.200 and port 41850
 
 4. Use ethtool and sysctl options to configure network parameters
 
@@ -83,3 +91,5 @@ $ sudo apt-get install linux-image-$(uname -r)-dbg
    sudo iptables -L -n -v -x
    sudo iptables -L -n -v -x -Z
    watch -n10 "sudo iptables -L -n -v -x -Z"
+
+   nc -vz localhost 1883
