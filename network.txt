@@ -93,3 +93,27 @@ $ sudo apt-get install linux-image-$(uname -r)-dbg
    watch -n10 "sudo iptables -L -n -v -x -Z"
 
    nc -vz localhost 1883
+   
+   //// Network Scanning Commands //////
+   // Find remote endpoints in the network of your machine
+sudo nmap -sn 10.202.254.0/24
+
+// find listening TCP ports in a remote machine. -sT tells nmap to scan for TCP ports and -p- to scan for all 65535 ports. If -p- is not used nmap will scan only the 1000 most popular ports
+
+sudo nmap -sT -p-  10.202.254.24
+// using netcat command -
+//  port range: 20-80;  -z option tells nc to scan only for open ports, without sending any data and the -v is for more verbose information.
+nc -z -v 10.10.8.8 20-80
+
+//nc command for udp ports scanning 
+nc -z -v -u 10.10.8.8 20-80 2>&1 | grep succeeded
+
+// find open UDP ports in a remote machine
+sudo nmap -sU -p- 10.10.8.8
+
+
+
+
+External Links: 
+https://www.cyberciti.biz/security/nmap-command-examples-tutorials/
+
